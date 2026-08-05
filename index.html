@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lean Plan">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0a0e1c">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>3-Week Lean & Toned Plan</title>
+<style>
+  :root{
+    --bg:#0a0e1c;
+    --card:#131a30;
+    --card2:#1a2444;
+    --accent:#ff4b4b;
+    --accent2:#3b6bff;
+    --danger:#ff3b3b;
+    --gold:#ff4b4b;
+    --text:#f5f6fa;
+    --sub:#8d96b8;
+    --border:#242e54;
+    --radius:16px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Segoe UI,Roboto,sans-serif;
+    padding-bottom:88px;
+    -webkit-font-smoothing:antialiased;
+  }
+  header{
+    padding:20px 20px 12px;
+    position:sticky; top:0; z-index:5;
+    background:linear-gradient(180deg, var(--bg) 70%, transparent);
+  }
+  header h1{
+    font-size:20px; margin:0 0 2px;
+    letter-spacing:-0.3px;
+  }
+  header .today{
+    font-size:14px; color:var(--sub);
+  }
+  main{ padding:0 16px 24px; max-width:520px; margin:0 auto; }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:14px;
+  }
+  .day-hero{
+    background:linear-gradient(135deg, #3a1508, #0e1530);
+    border:1px solid #4a2416;
+  }
+  .day-hero .tag{
+    display:inline-block;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    color:var(--accent);
+    background:rgba(255,75,75,0.18);
+    padding:4px 10px;
+    border-radius:999px;
+    margin-bottom:8px;
+  }
+  .day-hero h2{ margin:0 0 4px; font-size:22px; }
+  .day-hero p{ margin:0; color:var(--sub); font-size:14px; }
+
+  .subhead{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--sub);
+    font-weight:700;
+    margin:14px 4px 4px;
+  }
+  .subhead:first-child{ margin-top:0; }
+
+  .exercise{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .exercise:last-child{ border-bottom:none; }
+  .exercise input[type=checkbox]{
+    width:24px; height:24px;
+    flex-shrink:0;
+    accent-color:var(--accent);
+  }
+  .exercise .info{ flex:1; }
+  .exercise .name{ font-size:15.5px; font-weight:600; }
+  .exercise .meta{ font-size:13px; color:var(--sub); margin-top:2px; }
+  .exercise.done .name{ text-decoration:line-through; color:var(--sub); }
+
+  h3.section-title{
+    font-size:13px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--sub);
+    margin:22px 4px 10px;
+  }
+
+  .weekstrip{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:2px 0 6px;
+    margin-bottom:4px;
+  }
+  .weekstrip button{
+    flex:0 0 auto;
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--sub);
+    border-radius:12px;
+    padding:10px 12px;
+    font-size:13px;
+    font-weight:600;
+    min-width:52px;
+  }
+  .weekstrip button.active{
+    background:var(--accent);
+    color:#0e0f13;
+    border-color:var(--accent);
+  }
+
+  nav.tabbar{
+    position:fixed; bottom:0; left:0; right:0;
+    display:flex;
+    background:rgba(24,26,33,0.96);
+    backdrop-filter:blur(12px);
+    border-top:1px solid var(--border);
+    padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+    z-index:10;
+  }
+  nav.tabbar button{
+    flex:1;
+    background:none;
+    border:none;
+    color:var(--sub);
+    font-size:10.5px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    padding:6px 2px;
+    font-weight:600;
+  }
+  nav.tabbar button .ico{ font-size:19px; }
+  nav.tabbar button.active{ color:var(--accent); }
+
+  .view{ display:none; }
+  .view.active{ display:block; }
+
+  /* Timer */
+  .segmented{
+    display:flex;
+    background:var(--card2);
+    border-radius:12px;
+    padding:4px;
+    margin-bottom:16px;
+  }
+  .segmented button{
+    flex:1;
+    background:none;
+    border:none;
+    color:var(--sub);
+    padding:10px 0;
+    border-radius:9px;
+    font-size:14px;
+    font-weight:700;
+  }
+  .segmented button.active{
+    background:var(--accent);
+    color:#0e0f13;
+  }
+  .timer-display{
+    text-align:center;
+    padding:30px 0 10px;
+  }
+  .timer-display .clock{
+    font-size:68px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:-1px;
+  }
+  .timer-display .phase{
+    font-size:16px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+    color:var(--accent);
+  }
+  .timer-display .phase.rest{ color:var(--accent2); }
+  .timer-display .rounds{ color:var(--sub); font-size:14px; margin-top:6px;}
+  .timer-controls{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+  }
+  .btn{
+    flex:1;
+    border:none;
+    border-radius:14px;
+    padding:16px 0;
+    font-size:16px;
+    font-weight:700;
+    color:#0e0f13;
+    background:var(--accent);
+  }
+  .btn.secondary{
+    background:var(--card2);
+    color:var(--accent2);
+    border:1px solid var(--accent2);
+  }
+  .btn.wide{ width:100%; margin-bottom:14px; }
+  .presetgrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .presetgrid button{
+    background:var(--card2);
+    border:1px solid var(--border);
+    color:var(--text);
+    border-radius:12px;
+    padding:14px 8px;
+    font-size:14px;
+    font-weight:700;
+  }
+  .presetgrid button.active{
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .field-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:10px 4px;
+    border-bottom:1px solid var(--border);
+  }
+  .field-row:last-child{border-bottom:none;}
+  .stepper{ display:flex; align-items:center; gap:14px; }
+  .stepper button{
+    width:34px; height:34px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:var(--card2);
+    color:var(--text);
+    font-size:18px;
+    font-weight:700;
+  }
+  .stepper span{ min-width:42px; text-align:center; font-weight:700; font-size:16px; }
+
+  /* Spotify */
+  .spotify-card{
+    background:linear-gradient(135deg,#123524,#0e0f13);
+    border:1px solid #1db95440;
+  }
+  .spotify-card h3{ margin:0 0 6px; font-size:17px; }
+  .spotify-card p{ color:var(--sub); font-size:14px; margin:0 0 14px; line-height:1.5; }
+  .spotify-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    background:#1db954;
+    color:#06170e;
+    font-weight:800;
+    font-size:15px;
+    padding:14px 0;
+    border-radius:12px;
+    text-decoration:none;
+    margin-bottom:10px;
+  }
+  .note{
+    font-size:12.5px;
+    color:var(--sub);
+    line-height:1.5;
+    background:var(--card2);
+    border-radius:10px;
+    padding:12px;
+    margin-top:10px;
+  }
+
+  /* Advice page */
+  .advice-card h3{
+    margin:0 0 10px;
+    font-size:16px;
+  }
+  .advice-card p{
+    font-size:14px;
+    color:var(--sub);
+    line-height:1.55;
+    margin:0 0 8px;
+  }
+  .advice-card ul{
+    margin:0;
+    padding-left:18px;
+    font-size:14px;
+    color:var(--text);
+    line-height:1.7;
+  }
+  .advice-card ul li{ margin-bottom:2px; }
+  .pill-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:4px;
+  }
+  .pill{
+    background:var(--card2);
+    border:1px solid var(--accent2);
+    color:var(--accent2);
+    border-radius:999px;
+    padding:8px 14px;
+    font-size:13px;
+    font-weight:600;
+  }
+  .stat-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .stat{
+    flex:1;
+    background:var(--card2);
+    border-radius:12px;
+    padding:12px;
+    text-align:center;
+  }
+  .stat .num{ font-size:20px; font-weight:800; color:var(--accent); }
+  .stat .lbl{ font-size:11px; color:var(--sub); text-transform:uppercase; letter-spacing:0.4px; margin-top:2px; }
+  .mantra-card{
+    background:linear-gradient(135deg,#3a1508,#0e1e4a);
+    border:1px solid var(--accent);
+    text-align:center;
+  }
+  .mantra-card .emoji{ font-size:28px; margin-bottom:8px; }
+  .mantra-card p{
+    color:var(--gold);
+    font-size:16px;
+    font-weight:700;
+    line-height:1.5;
+    margin:0;
+  }
+  .qa-q{ font-weight:700; font-size:14.5px; margin-bottom:4px; }
+  .qa-a{ font-size:14px; color:var(--sub); line-height:1.55; margin:0 0 4px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎯 3-Week Lean &amp; Toned Plan</h1>
+  <div class="today" id="todayLabel">—</div>
+</header>
+
+<main>
+
+  <!-- TODAY VIEW -->
+  <section class="view active" id="view-today">
+    <div class="weekstrip" id="weekstrip"></div>
+    <div class="card day-hero">
+      <span class="tag" id="dayTag">TODAY</span>
+      <h2 id="dayTitle">—</h2>
+      <p id="daySub">—</p>
+    </div>
+    <div class="card" id="exerciseCard">
+      <div id="exerciseList"></div>
+    </div>
+  </section>
+
+  <!-- ADVICE VIEW -->
+  <section class="view" id="view-advice">
+    <div class="card mantra-card">
+      <div class="emoji">🎯</div>
+      <p>Lift hard. Walk a lot. Eat high protein.<br>Stay in a calorie deficit. Sleep well. Repeat.</p>
+    </div>
+
+    <div class="card advice-card">
+      <h3>Goal</h3>
+      <ul>
+        <li>Lose 5–10 lbs of body fat</li>
+        <li>Become lean, toned, and athletic</li>
+        <li>Maintain/build muscle while cutting</li>
+        <li>Rebuild strength using muscle memory</li>
+        <li>Build habits that carry over long-term</li>
+      </ul>
+    </div>
+
+    <div class="card advice-card">
+      <h3>Daily Nutrition</h3>
+      <div class="stat-row">
+        <div class="stat"><div class="num">−300 to −500</div><div class="lbl">Cal / day deficit</div></div>
+        <div class="stat"><div class="num">110–130g</div><div class="lbl">Protein / day</div></div>
+      </div>
+      <p style="margin-top:10px;">Base meals around:</p>
+      <div class="pill-row">
+        <span class="pill">Chicken</span><span class="pill">Turkey</span><span class="pill">Lean beef</span>
+        <span class="pill">Fish</span><span class="pill">Eggs / whites</span><span class="pill">Greek yogurt</span>
+        <span class="pill">Cottage cheese</span><span class="pill">Protein powder</span><span class="pill">Fruit</span>
+        <span class="pill">Vegetables</span><span class="pill">Potatoes</span><span class="pill">Rice</span><span class="pill">Oats</span>
+      </div>
+    </div>
+
+    <div class="card advice-card">
+      <h3>Daily Habits Checklist</h3>
+      <div id="habitList"></div>
+    </div>
+
+    <div class="card advice-card">
+      <h3>Progressive Overload</h3>
+      <p>Every week, improve one thing: a bit more weight, 1–2 more reps, or better form/control.</p>
+      <div class="pill-row">
+        <span class="pill">Week 1: 20 lb</span>
+        <span class="pill">Week 2: 22.5 lb</span>
+        <span class="pill">Week 3: 25 lb</span>
+      </div>
+    </div>
+
+    <div class="card advice-card">
+      <h3>Weekly Cardio Plan</h3>
+      <ul>
+        <li>2 HIIT sessions</li>
+        <li>3 incline walks</li>
+        <li>1 long Zone 2 cardio session</li>
+        <li>Daily walking</li>
+      </ul>
+    </div>
+
+    <div class="card advice-card">
+      <h3>Fat Loss Priorities</h3>
+      <ul>
+        <li>Stay in a calorie deficit</li>
+        <li>Lift heavy with good form</li>
+        <li>Eat enough protein</li>
+        <li>Walk every day</li>
+        <li>Sleep enough</li>
+        <li>Be consistent</li>
+      </ul>
+    </div>
+
+    <div class="card advice-card">
+      <h3>Muscle Growth Priorities</h3>
+      <ul>
+        <li>Train each muscle ~2×/week</li>
+        <li>Eat enough protein</li>
+        <li>Push most sets to 1–3 reps in reserve</li>
+        <li>Recover properly</li>
+        <li>Progress every week</li>
+      </ul>
+    </div>
+
+    <div class="card advice-card">
+      <h3>HIIT &amp; Quad Growth</h3>
+      <div class="qa-q">Will sprinting make my quads big?</div>
+      <p class="qa-a">No. Big quads mainly come from heavy squats, heavy leg press, heavy quad-focused training, and a calorie surplus. HIIT mainly builds conditioning and burns calories.</p>
+      <p style="margin-bottom:0;">To keep legs lean: limit HIIT to 2 sessions/week, prioritize incline walking, and keep lower-body strength work glute/hamstring focused.</p>
+    </div>
+
+    <div class="card advice-card">
+      <h3>Reminders</h3>
+      <ul>
+        <li>Muscle memory helps you regain strength and definition quickly</li>
+        <li>Fat loss comes mainly from nutrition — training preserves muscle</li>
+        <li>Consistency beats perfection</li>
+        <li>Goal isn't to be exhausted every workout — it's to improve every week</li>
+        <li>Trust the process for the full 3 weeks before changing anything</li>
+      </ul>
+      <p class="note" style="margin-top:12px;">Once back at Queen's with a full gym, switch to a more advanced 5-day plan using cables and machines to maximize a lean, athletic look while minimizing unnecessary quad growth.</p>
+    </div>
+  </section>
+
+  <!-- TIMER VIEW -->
+  <section class="view" id="view-timer">
+    <h3 class="section-title">Timer</h3>
+    <div class="segmented">
+      <button class="mode-btn active" data-mode="tabata">Intervals</button>
+      <button class="mode-btn" data-mode="rest">Rest</button>
+      <button class="mode-btn" data-mode="stopwatch">Stopwatch</button>
+    </div>
+
+    <div class="card" id="tabataSetup">
+      <button class="btn wide secondary" id="hiitPreset">⚡ Load Tue HIIT (30s sprint / 90s walk × 12)</button>
+      <div class="field-row">
+        <span>Work</span>
+        <div class="stepper">
+          <button data-adj="workDown">–</button>
+          <span id="workVal">20s</span>
+          <button data-adj="workUp">+</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <span>Rest</span>
+        <div class="stepper">
+          <button data-adj="restDown">–</button>
+          <span id="restVal">10s</span>
+          <button data-adj="restUp">+</button>
+        </div>
+      </div>
+      <div class="field-row">
+        <span>Rounds</span>
+        <div class="stepper">
+          <button data-adj="roundsDown">–</button>
+          <span id="roundsVal">8</span>
+          <button data-adj="roundsUp">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="restSetup" style="display:none;">
+      <div class="presetgrid">
+        <button class="rest-preset" data-secs="30">30s</button>
+        <button class="rest-preset active" data-secs="45">45s</button>
+        <button class="rest-preset" data-secs="60">60s</button>
+        <button class="rest-preset" data-secs="90">90s</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="timer-display">
+        <div class="phase" id="timerPhase">READY</div>
+        <div class="clock" id="timerClock">00:20</div>
+        <div class="rounds" id="timerRounds">&nbsp;</div>
+      </div>
+      <div class="timer-controls">
+        <button class="btn secondary" id="resetBtn">Reset</button>
+        <button class="btn" id="startBtn">Start</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPOTIFY VIEW -->
+  <section class="view" id="view-spotify">
+    <h3 class="section-title">Music</h3>
+    <div class="card spotify-card">
+      <h3>🎧 Workout Playlist</h3>
+      <p>Jump straight into Spotify to press play before you start your session.</p>
+      <a class="spotify-btn" href="spotify:playlist" id="spotifyDeepLink">▶ Open Spotify</a>
+      <a class="spotify-btn" style="background:var(--card2); color:var(--text);" href="https://open.spotify.com/search/workout%20playlist" target="_blank">Search workout playlists on Spotify</a>
+      <div class="note">
+        Full in-app playback control needs a Spotify Premium account connected through OAuth — not something a plain phone webpage can do alone. Connect Spotify in chat and I'll build a playlist + link it here directly.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<nav class="tabbar">
+  <button class="tab-btn active" data-view="today"><span class="ico">📋</span>Today</button>
+  <button class="tab-btn" data-view="advice"><span class="ico">💡</span>Advice</button>
+  <button class="tab-btn" data-view="timer"><span class="ico">⏱</span>Timer</button>
+  <button class="tab-btn" data-view="spotify"><span class="ico">🎧</span>Music</button>
+</nav>
+
+<script>
+/* ---------------- DATA ---------------- */
+const PLAN = {
+  0: { // Sunday
+    tag: "LOWER · GLUTES & HAMSTRINGS", title: "Lower Body — Glutes & Hamstrings", sub: "Strength then incline cardio.",
+    groups: [
+      { label: "Strength", ex: [
+        ["Bulgarian split squats", "3x10 each leg"],
+        ["Romanian deadlifts", "4x8–10"],
+        ["Hip thrusts", "4x12"],
+        ["Single-leg Romanian deadlifts", "3x10 each leg"],
+        ["Banded abductions", "3x20"],
+        ["TRX hamstring curls", "3x12"],
+      ]},
+      { label: "Cardio", ex: [
+        ["Incline treadmill walk", "15–20 min"],
+      ]}
+    ]
+  },
+  1: { // Monday
+    tag: "UPPER BODY + CORE", title: "Upper Body + Core", sub: "Shoulders/back strength, core, easy row finisher.",
+    groups: [
+      { label: "Strength", ex: [
+        ["Incline dumbbell press", "3x10"],
+        ["One-arm dumbbell rows", "3x10 each side"],
+        ["Shoulder press", "3x10"],
+        ["Lateral raises", "4x15"],
+        ["Rear delt fly", "3x15"],
+        ["Assisted pull-ups (bands)", "3x8–10"],
+      ]},
+      { label: "Core", ex: [
+        ["Hanging knee raises", "3x12"],
+        ["Dead bugs", "3x12 each side"],
+        ["Plank", "3x30–45 sec"],
+      ]},
+      { label: "Finish", ex: [
+        ["Rowing machine", "10 min easy-moderate"],
+      ]}
+    ]
+  },
+  2: { // Tuesday
+    tag: "HIIT + CORE", title: "HIIT + Core", sub: "Treadmill sprint intervals, then a core circuit.",
+    groups: [
+      { label: "Treadmill HIIT", ex: [
+        ["Sprint", "30 sec"],
+        ["Walk recovery", "90 sec"],
+        ["Repeat", "10–12 rounds — use the Timer tab preset"],
+      ]},
+      { label: "Core Circuit — 3 rounds", ex: [
+        ["TRX mountain climbers", "30 sec"],
+        ["Russian twists", "20 reps (10/side)"],
+        ["Reverse crunches", "15 reps"],
+        ["Side plank", "30 sec/side"],
+      ]}
+    ]
+  },
+  3: { // Wednesday
+    tag: "LOWER · GLUTE FOCUS", title: "Lower Body — Glute Focus", sub: "Higher volume glute day, then incline cardio.",
+    groups: [
+      { label: "Strength", ex: [
+        ["Hip thrusts", "5x8"],
+        ["Walking lunges", "3x12 each leg"],
+        ["Step-ups", "3x10 each leg"],
+        ["Banded kickbacks", "3x15 each leg"],
+        ["Frog pumps", "3x25"],
+        ["Calf raises", "3x20"],
+      ]},
+      { label: "Cardio", ex: [
+        ["Incline treadmill walk", "20 min"],
+      ]}
+    ]
+  },
+  4: { // Thursday
+    tag: "UPPER · BACK & SHOULDERS", title: "Upper Body — Back & Shoulders", sub: "Pulling volume + rear delts, row finisher.",
+    groups: [
+      { label: "Strength", ex: [
+        ["Pull-ups / assisted pull-ups", "3x6–10"],
+        ["Single-arm rows", "3x10 each side"],
+        ["Chest-supported rear delt fly", "3x15"],
+        ["Lateral raise dropset", "3 sets: 12 reps, drop weight, +8 reps"],
+        ["Hammer curls", "3x12"],
+        ["Tricep extensions", "3x12–15"],
+      ]},
+      { label: "Finish", ex: [
+        ["Rowing machine", "15 min"],
+      ]}
+    ]
+  },
+  5: { // Friday
+    tag: "LONG CARDIO", title: "Long Cardio — Zone 2", sub: "Choose ONE. Comfortable, conversational pace throughout.",
+    groups: [
+      { label: "Choose one", ex: [
+        ["Option A — Walk outside", "45–60 min · Zone 2"],
+        ["Option B — Incline treadmill walk", "45–60 min · Zone 2"],
+        ["Option C — Easy row", "45–60 min · Zone 2"],
+      ]}
+    ]
+  },
+  6: { // Saturday
+    tag: "RECOVERY", title: "Recovery", sub: "Rest, move gently, stretch.",
+    groups: [
+      { label: "Today", ex: [
+        ["Rest", "Full rest day"],
+        ["Daily steps", "8,000–10,000 steps"],
+        ["Stretch / mobility", "10 min"],
+      ]}
+    ]
+  }
+};
+const DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+const HABITS = [
+  "Hit protein goal (110–130g)",
+  "Stay in calorie deficit",
+  "Drink 2.5–3 L water",
+  "Walk 10,000–12,000+ steps",
+  "Complete workout",
+  "Sleep 7.5–9 hours",
+  "Stretch 5–10 minutes",
+  "Track weight (3–4 mornings/week)"
+];
+
+/* ---------------- TODAY VIEW ---------------- */
+let selectedDay = new Date().getDay();
+const todayIdx = new Date().getDay();
+
+function dateKey(offsetFromToday){
+  const d = new Date();
+  d.setDate(d.getDate() + offsetFromToday);
+  return d.toISOString().slice(0,10);
+}
+
+function renderWeekstrip(){
+  const el = document.getElementById('weekstrip');
+  el.innerHTML = '';
+  for(let i=0;i<7;i++){
+    const btn = document.createElement('button');
+    btn.textContent = DAY_NAMES[i];
+    if(i === selectedDay) btn.classList.add('active');
+    btn.onclick = () => { selectedDay = i; renderDay(); renderWeekstrip(); };
+    el.appendChild(btn);
+  }
+}
+
+function renderDay(){
+  const d = PLAN[selectedDay];
+  document.getElementById('dayTag').textContent = selectedDay === todayIdx ? 'TODAY · ' + d.tag : d.tag;
+  document.getElementById('dayTitle').textContent = d.title;
+  document.getElementById('daySub').textContent = d.sub;
+
+  const offset = selectedDay - todayIdx;
+  const key = 'chk-' + dateKey(offset) + '-';
+
+  const list = document.getElementById('exerciseList');
+  list.innerHTML = '';
+  let idx = 0;
+  d.groups.forEach(group => {
+    const h = document.createElement('div');
+    h.className = 'subhead';
+    h.textContent = group.label;
+    list.appendChild(h);
+    group.ex.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'exercise';
+      const storeKey = key + idx;
+      idx++;
+      const checked = localStorage.getItem(storeKey) === '1';
+      if(checked) row.classList.add('done');
+      row.innerHTML = `
+        <input type="checkbox" ${checked ? 'checked' : ''}>
+        <div class="info">
+          <div class="name">${item[0]}</div>
+          <div class="meta">${item[1]}</div>
+        </div>`;
+      const cb = row.querySelector('input');
+      cb.addEventListener('change', () => {
+        if(cb.checked){ localStorage.setItem(storeKey,'1'); row.classList.add('done'); }
+        else { localStorage.removeItem(storeKey); row.classList.remove('done'); }
+      });
+      list.appendChild(row);
+    });
+  });
+}
+
+function renderHabits(){
+  const list = document.getElementById('habitList');
+  list.innerHTML = '';
+  const key = 'habit-' + dateKey(0) + '-';
+  HABITS.forEach((label, i) => {
+    const row = document.createElement('div');
+    row.className = 'exercise';
+    const storeKey = key + i;
+    const checked = localStorage.getItem(storeKey) === '1';
+    if(checked) row.classList.add('done');
+    row.innerHTML = `
+      <input type="checkbox" ${checked ? 'checked' : ''}>
+      <div class="info">
+        <div class="name">${label}</div>
+      </div>`;
+    const cb = row.querySelector('input');
+    cb.addEventListener('change', () => {
+      if(cb.checked){ localStorage.setItem(storeKey,'1'); row.classList.add('done'); }
+      else { localStorage.removeItem(storeKey); row.classList.remove('done'); }
+    });
+    list.appendChild(row);
+  });
+}
+
+function renderHeader(){
+  const now = new Date();
+  const opts = { weekday:'long', month:'long', day:'numeric' };
+  document.getElementById('todayLabel').textContent = now.toLocaleDateString(undefined, opts);
+}
+
+renderHeader();
+renderWeekstrip();
+renderDay();
+renderHabits();
+
+/* ---------------- TAB NAV ---------------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('view-' + btn.dataset.view).classList.add('active');
+  });
+});
+
+/* ---------------- TIMER ---------------- */
+let mode = 'tabata';
+let work = 20, rest = 10, rounds = 8;
+let restPreset = 45;
+
+let timerState = {
+  running:false,
+  phase:'work', // work | rest | stopwatch
+  remaining:work,
+  round:1,
+  intervalId:null,
+  swElapsed:0
+};
+
+const clockEl = document.getElementById('timerClock');
+const phaseEl = document.getElementById('timerPhase');
+const roundsEl = document.getElementById('timerRounds');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+function fmt(s){
+  const m = Math.floor(s/60);
+  const sec = s%60;
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+
+function beep(freq=880, dur=0.12){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.frequency.value = freq;
+    o.type = 'sine';
+    g.gain.setValueAtTime(0.25, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + dur);
+  }catch(e){}
+  if(navigator.vibrate) navigator.vibrate(60);
+}
+
+function resetTimerDisplay(){
+  clearInterval(timerState.intervalId);
+  timerState.running = false;
+  timerState.round = 1;
+  timerState.swElapsed = 0;
+  startBtn.textContent = 'Start';
+  if(mode === 'tabata'){
+    timerState.phase = 'work';
+    timerState.remaining = work;
+    phaseEl.textContent = 'GET READY';
+    phaseEl.className = 'phase';
+    clockEl.textContent = fmt(work);
+    roundsEl.textContent = 'Round 1 of ' + rounds;
+  } else if(mode === 'rest'){
+    timerState.phase = 'rest';
+    timerState.remaining = restPreset;
+    phaseEl.textContent = 'REST';
+    phaseEl.className = 'phase rest';
+    clockEl.textContent = fmt(restPreset);
+    roundsEl.textContent = ' ';
+  } else {
+    timerState.phase = 'stopwatch';
+    phaseEl.textContent = 'STOPWATCH';
+    phaseEl.className = 'phase';
+    clockEl.textContent = fmt(0);
+    roundsEl.textContent = ' ';
+  }
+}
+
+function tick(){
+  if(mode === 'stopwatch'){
+    timerState.swElapsed++;
+    clockEl.textContent = fmt(timerState.swElapsed);
+    return;
+  }
+  timerState.remaining--;
+  if(timerState.remaining < 0){
+    if(mode === 'tabata'){
+      if(timerState.phase === 'work'){
+        if(timerState.round >= rounds){
+          beep(1200,0.3);
+          clearInterval(timerState.intervalId);
+          timerState.running = false;
+          startBtn.textContent = 'Start';
+          phaseEl.textContent = 'DONE 🎉';
+          phaseEl.className = 'phase';
+          clockEl.textContent = '00:00';
+          roundsEl.textContent = 'All ' + rounds + ' rounds complete';
+          return;
+        }
+        timerState.phase = 'rest';
+        timerState.remaining = rest - 1;
+        phaseEl.textContent = 'REST';
+        phaseEl.className = 'phase rest';
+        beep(600,0.15);
+      } else {
+        timerState.round++;
+        timerState.phase = 'work';
+        timerState.remaining = work - 1;
+        phaseEl.textContent = 'WORK';
+        phaseEl.className = 'phase';
+        beep(1000,0.15);
+      }
+      roundsEl.textContent = 'Round ' + timerState.round + ' of ' + rounds;
+    } else if(mode === 'rest'){
+      beep(1200,0.3);
+      clearInterval(timerState.intervalId);
+      timerState.running = false;
+      startBtn.textContent = 'Start';
+      phaseEl.textContent = 'DONE 🎉';
+      clockEl.textContent = '00:00';
+      return;
+    }
+  }
+  clockEl.textContent = fmt(timerState.remaining);
+}
+
+startBtn.addEventListener('click', ()=>{
+  if(timerState.running){
+    clearInterval(timerState.intervalId);
+    timerState.running = false;
+    startBtn.textContent = 'Resume';
+  } else {
+    if(mode==='tabata' && phaseEl.textContent === 'GET READY'){
+      phaseEl.textContent = 'WORK';
+    }
+    timerState.running = true;
+    startBtn.textContent = 'Pause';
+    timerState.intervalId = setInterval(tick, 1000);
+  }
+});
+
+resetBtn.addEventListener('click', resetTimerDisplay);
+
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    mode = btn.dataset.mode;
+    document.getElementById('tabataSetup').style.display = mode==='tabata' ? 'block' : 'none';
+    document.getElementById('restSetup').style.display = mode==='rest' ? 'block' : 'none';
+    resetTimerDisplay();
+  });
+});
+
+document.querySelectorAll('.rest-preset').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.rest-preset').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    restPreset = parseInt(btn.dataset.secs,10);
+    resetTimerDisplay();
+  });
+});
+
+document.getElementById('hiitPreset').addEventListener('click', ()=>{
+  work = 30; rest = 90; rounds = 12;
+  document.getElementById('workVal').textContent = work+'s';
+  document.getElementById('restVal').textContent = rest+'s';
+  document.getElementById('roundsVal').textContent = rounds;
+  resetTimerDisplay();
+});
+
+document.querySelectorAll('[data-adj]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key = btn.dataset.adj;
+    if(key==='workUp') work = Math.min(work+5,90);
+    if(key==='workDown') work = Math.max(work-5,5);
+    if(key==='restUp') rest = Math.min(rest+5,120);
+    if(key==='restDown') rest = Math.max(rest-5,5);
+    if(key==='roundsUp') rounds = Math.min(rounds+1,16);
+    if(key==='roundsDown') rounds = Math.max(rounds-1,2);
+    document.getElementById('workVal').textContent = work+'s';
+    document.getElementById('restVal').textContent = rest+'s';
+    document.getElementById('roundsVal').textContent = rounds;
+    resetTimerDisplay();
+  });
+});
+
+resetTimerDisplay();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
