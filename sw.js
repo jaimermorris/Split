@@ -1,4 +1,4 @@
-const CACHE = 'lean-plan-v2';
+const CACHE = 'lean-plan-v4';
 const ASSETS = [
   './',
   './index.html',
